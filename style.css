@@ -1,5 +1,12 @@
+* {
+  /* Global selector can help*/
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  /* Most child elements will inherit color properties (not forms though)*/
+  /* Most child elements will inherit color (not margin/padding) properties (not forms though)*/
   background-color: #292524;
   color: #fafaf9;
   font-family: "Sono", sans-serif;
@@ -8,13 +15,17 @@ body {
 h1 {
   font-size: x-large;
   text-transform: uppercase;
-  text-align: center;
   font-family: "Coiny", sans-serif;
   color: #fafaf9;
 }
 
+.header {
+  margin-bottom: 40px;
+}
+
 .fact-form {
   background-color: #44403c;
+  margin-bottom: 40px;
 }
 
 .fact {
@@ -22,6 +33,8 @@ h1 {
   line-height: 1.4; /* line-height: amount of vertical spacing between lines of text */
   color: #fafaf9;
   background-color: #44403c;
+  margin-bottom: 16px;
+  padding: 16px;
 }
 
 .tag {
