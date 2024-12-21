@@ -54,8 +54,11 @@ h1 {
 .fact-form {
   background-color: #44403c;
   margin-bottom: 40px;
-  padding: 16px 40px;
-  text-align: center;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: 16px;
 }
 
 .main {
@@ -74,6 +77,7 @@ h1 {
   margin-bottom: 16px;
   padding: 16px 24px;
   letter-spacing: -1px;
+  border-radius: 16px;
 
   display: flex;
   align-items: center;
@@ -82,7 +86,7 @@ h1 {
 
 .tag {
   text-transform: uppercase;
-  font-size: xx-small;
+  font-size: small;
   font-family: "Coiny", sans-serif;
   padding-top: 2px;
   padding-left: 10px;
@@ -173,4 +177,31 @@ ul {
 .btn-category {
   width: 100%;
   background-image: none;
+}
+
+.fact-form input,
+.fact-form select {
+  max-width: 220px;
+  background-color: #78716c;
+  border: none;
+  border-radius: 100px;
+  padding: 16px;
+  font-size: 18px;
+  color: inherit;
+  font-family: inherit;
+}
+
+/* Style placeholder text to inherit the color from its parent element for consistency */
+.fact-form input::placeholder {
+  color: #a8a29e;
+}
+
+.fact-form input:first-child {
+  flex-grow: 1;
+}
+
+.fact-form span {
+  font-weight: 600;
+  font-size: 18px;
+  margin-right: 18px;
 }
