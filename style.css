@@ -55,10 +55,11 @@ h1 {
   background-color: #44403c;
   margin-bottom: 40px;
   padding: 16px 32px;
-  display: flex;
   align-items: center;
   gap: 16px;
   border-radius: 16px;
+
+  display: flex;
 }
 
 .main {
@@ -181,7 +182,7 @@ ul {
 
 .fact-form input,
 .fact-form select {
-  max-width: 220px;
+  width: 220px;
   background-color: #78716c;
   border: none;
   border-radius: 100px;
