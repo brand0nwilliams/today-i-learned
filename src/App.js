@@ -67,33 +67,13 @@ function App() {
   const [showForm, setShowForm] =
     useState(false);
 
-  const appTitle = "Today I Learned";
-
   return (
     // fragments avoid arbitarily creating HTML Code / grouping elements -->  <> fragment stuff </>
     <>
-      {/* TO-DO: Place Header in its own Component */}
-      <header className="header">
-        <div className="logo">
-          <img
-            src="logo.png"
-            height="68"
-            width="68"
-            alt="Today I Learned Logo"
-          />
-          <h1>{appTitle}</h1>
-        </div>
-        <button
-          className="btn btn-large btn-open"
-          onClick={() =>
-            setShowForm(
-              (showForm) => !showForm
-            )
-          }
-        >
-          Share a fact
-        </button>
-      </header>
+      <Header
+        showForm={showForm}
+        setShowForm={setShowForm}
+      />
 
       {showForm ? (
         <NewFactForm />
@@ -104,6 +84,39 @@ function App() {
         <FactList />
       </main>
     </>
+  );
+}
+
+function Header({
+  showForm,
+  setShowForm,
+}) {
+  const appTitle = "Today I Learned";
+
+  return (
+    <header className="header">
+      <div className="logo">
+        <img
+          src="logo.png"
+          height="68"
+          width="68"
+          alt="Today I Learned Logo"
+        />
+        <h1>{appTitle}</h1>
+      </div>
+      <button
+        className="btn btn-large btn-open"
+        onClick={() =>
+          setShowForm(
+            (showForm) => !showForm
+          )
+        }
+      >
+        {showForm
+          ? "Close"
+          : "Share a fact"}
+      </button>
+    </header>
   );
 }
 
