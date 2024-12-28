@@ -67,6 +67,10 @@ function App() {
   const [showForm, setShowForm] =
     useState(false);
 
+  const [facts, setFacts] = useState(
+    initialFacts
+  );
+
   return (
     // fragments avoid arbitarily creating HTML Code / grouping elements -->  <> fragment stuff </>
     <>
@@ -76,12 +80,16 @@ function App() {
       />
 
       {showForm ? (
-        <NewFactForm />
+        <NewFactForm
+          setFacts={setFacts}
+          setShowForm={setShowForm}
+        /> /* <!--- passing props to _set_ the "facts" state --> */
       ) : null}
 
       <main className="main">
         <CategoryFilter />
-        <FactList />
+        <FactList facts={facts} />{" "}
+        {/* <!--- passing props to _use_ the "facts" state --> */}
       </main>
     </>
   );
@@ -137,15 +145,80 @@ const CATEGORIES = [
   { name: "news", color: "#8b5cf6" },
 ];
 
-function NewFactForm() {
+function NewFactForm({
+  setFacts,
+  setShowForm,
+}) {
   const [text, setText] = useState("");
   const [source, setSource] =
     useState("");
   const [category, setCategory] =
     useState("");
 
+  const textLength = text.length;
+
+  function isValidHttpUrl(string) {
+    let url;
+
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+
+    return (
+      url.protocol === "http:" ||
+      url.protocol === "https:"
+    );
+  }
+
+  function handleSubmit(e) {
+    // 1. Prevent browser reloding
+    e.preventDefault();
+    console.log(text, source, category);
+
+    // 2. Check if data is valid. If so, create a new fact.
+    if (
+      text &&
+      isValidHttpUrl(source) &&
+      category &&
+      textLength <= 200
+    ) {
+      // 3. Create a new fact object.
+      const newFact = {
+        id: Math.round(
+          Math.random() * 1000000
+        ), // replace later with more reliable ids
+        text, // when variable name and key name are the same, you can just write it once
+        source, // same as above
+        category: "technology",
+        votesInteresting: 0,
+        votesMindblowing: 0,
+        votesFalse: 0,
+        createdIn:
+          new Date().getFullYear(),
+      };
+      // 4. Add the new fact to the UI; add fact to state
+      setFacts((facts) => [
+        newFact,
+        ...facts,
+      ]);
+
+      // 5. Reset input fields.
+      setText("");
+      setSource("");
+      setCategory("");
+
+      // 6. Close the form.
+      setShowForm(false);
+    }
+  }
+
   return (
-    <form className="fact-form">
+    <form
+      className="fact-form"
+      onSubmit={handleSubmit}
+    >
       {/* <!--- "input" is a self closing element with no content --> */}
       <input
         type="text"
@@ -155,7 +228,7 @@ function NewFactForm() {
           setText(e.target.value)
         }
       />
-      <span>200</span>
+      <span>{200 - textLength}</span>
       <input
         type="text"
         placeholder="Trustworthy source..."
@@ -220,10 +293,7 @@ function CategoryFilter() {
   );
 }
 
-function FactList() {
-  // TEMP
-  const facts = initialFacts;
-
+function FactList({ facts }) {
   return (
     <section>
       <ul className="facts-list">
