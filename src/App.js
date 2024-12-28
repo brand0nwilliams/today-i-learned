@@ -1,9 +1,10 @@
-import {
+import React, {
   useEffect,
   useState,
 } from "react";
 import supabase from "./supabase";
 import "./style.css";
+import Header from "./components/Header";
 
 const initialFacts = [
   {
@@ -41,7 +42,6 @@ const initialFacts = [
   },
 ];
 
-// Functions are re-rendered whenever state changes.
 function Counter() {
   const [count, setCount] = useState(8);
   console.log("rendering");
@@ -49,9 +49,7 @@ function Counter() {
   return (
     <div>
       <span
-        style={{
-          fontSize: "40px",
-        }}
+        style={{ fontSize: "40px" }}
       >
         {count}
       </span>
@@ -70,71 +68,62 @@ function Counter() {
 function App() {
   const [showForm, setShowForm] =
     useState(false);
-
   const [facts, setFacts] = useState(
     []
   );
-
   const [isLoading, setIsLoading] =
     useState(false);
-
   const [
     currentCategory,
     setCurrentCategory,
   ] = useState("all");
 
-  useEffect(
-    function () {
-      setIsLoading(true);
+  useEffect(() => {
+    setIsLoading(true);
 
-      let query = supabase
-        .from("facts")
-        .select("*");
+    let query = supabase
+      .from("facts")
+      .select("*");
 
-      if (currentCategory !== "all") {
-        query = query.eq(
-          "category",
-          currentCategory
+    if (currentCategory !== "all") {
+      query = query.eq(
+        "category",
+        currentCategory
+      );
+    }
+
+    async function getFacts() {
+      let { data: facts, error } =
+        await query
+          .order("votesInteresting", {
+            ascending: false,
+          })
+          .limit(1000);
+
+      if (!error) {
+        setFacts(facts);
+      } else {
+        alert(
+          "An error occurred. Please try again later."
         );
       }
-
-      async function getFacts() {
-        let { data: facts, error } =
-          await query
-            .order("votesInteresting", {
-              ascending: false,
-            })
-            .limit(1000);
-
-        if (!error) {
-          setFacts(facts);
-        } else {
-          alert(
-            "An error occurred. Please try again later."
-          );
-        }
-        setIsLoading(false);
-      }
-      getFacts();
-    } /* <!--- empty dependency array means this function runs only once when app renders (does NOT run when it re-renders--> */,
-    [currentCategory]
-  );
+      setIsLoading(false);
+    }
+    getFacts();
+  }, [currentCategory]);
 
   return (
-    // fragments avoid arbitarily creating HTML Code / grouping elements -->  <> fragment stuff </>
     <>
       <Header
         showForm={showForm}
         setShowForm={setShowForm}
       />
-
       {showForm ? (
         <NewFactForm
           setFacts={setFacts}
           setShowForm={setShowForm}
-        /> /* <!--- passing props to _set_ the "facts" state --> */
+        />
       ) : null}
-
       <main className="main">
         <CategoryFilter
           setCurrentCategory={
@@ -149,7 +138,6 @@ function App() {
             setFacts={setFacts}
           />
         )}
-        {/* <!--- passing props to _use_ the "facts" state --> */}
       </main>
     </>
   );
@@ -160,39 +148,6 @@ function Loader() {
     <p className="message">
       Loading...
     </p>
-  );
-}
-
-function Header({
-  showForm,
-  setShowForm,
-}) {
-  const appTitle = "Today I Learned";
-
-  return (
-    <header className="header">
-      <div className="logo">
-        <img
-          src="logo.png"
-          height="68"
-          width="68"
-          alt="Today I Learned Logo"
-        />
-        <h1>{appTitle}</h1>
-      </div>
-      <button
-        className="btn btn-large btn-open"
-        onClick={() =>
-          setShowForm(
-            (showForm) => !showForm
-          )
-        }
-      >
-        {showForm
-          ? "Close"
-          : "Share a fact"}
-      </button>
-    </header>
   );
 }
 
@@ -242,18 +197,15 @@ function NewFactForm({
   }
 
   async function handleSubmit(e) {
-    // 1. Prevent browser reloding
     e.preventDefault();
     console.log(text, source, category);
 
-    // 2. Check if data is valid. If so, create a new fact.
     if (
       text &&
       isValidHttpUrl(source) &&
       category &&
       textLength <= 200
     ) {
-      // 3. Upload fact to Supabase and receive new fact
       setIsUploading(true);
       const { data: newFact, error } =
         await supabase
@@ -264,19 +216,15 @@ function NewFactForm({
           .select();
 
       setIsUploading(true);
-      // 4. Add the new fact to the UI; add fact to state
       if (!error)
         setFacts((facts) => [
           newFact[0],
           ...facts,
         ]);
 
-      // 5. Reset input fields.
       setText("");
       setSource("");
       setCategory("");
-
-      // 6. Close the form.
       setShowForm(false);
     }
   }
@@ -286,7 +234,6 @@ function NewFactForm({
       className="fact-form"
       onSubmit={handleSubmit}
     >
-      {/* <!--- "input" is a self closing element with no content --> */}
       <input
         type="text"
         placeholder="Share a fact with the world..."
@@ -339,7 +286,6 @@ function CategoryFilter({
   setCurrentCategory,
 }) {
   return (
-    // <!--- "aside" tag is to group secondary content together, such as side bars -->
     <aside>
       <ul>
         <li className="category">
@@ -400,7 +346,6 @@ function FactList({ facts, setFacts }) {
         ))}
       </ul>
       <p>
-        {" "}
         There are {facts.length} facts
         in the database. Add your own!
       </p>
@@ -450,7 +395,6 @@ function Fact({ fact, setFacts }) {
           (Source)
         </a>
       </p>
-      {/* <!--- "span" tag creates a new text element without a new line, allows for separate styling --> */}
       <span
         className="tag"
         style={{
@@ -464,7 +408,6 @@ function Fact({ fact, setFacts }) {
       >
         {fact.category}
       </span>
-      {/* <!--- Use a "div" tag as a generic container for grouping elements--> */}
       <div className="vote-button">
         <button
           onClick={() =>
