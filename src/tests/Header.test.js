@@ -1,36 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Header from "../components/Header";
 
-// function provided by Jest to define a test case
-test("renders header with title", () => {
-  // arrange
-  render(<Header showForm={false} setShowForm={jest.fn()} />);
+// Wrapper component to manage state
+const HeaderWrapper = () => {
+  const [showForm, setShowForm] = useState(false);
+  return <Header showForm={showForm} setShowForm={setShowForm} />;
+};
 
-  // assert
-  expect(
-    // method from React Testing Library that queries the rendered DOM for an element with the text "Today I Learned
-    screen.getByText("Today I Learned")
-  ).toBeInTheDocument();
+// Test case for initial rendering
+test("renders header with title", () => {
+  // Arrange
+  render(<HeaderWrapper />);
+
+  // Assert
+  expect(screen.getByText("Today I Learned")).toBeInTheDocument();
 });
 
-test("calls setShowForm when Share a fact button is clicked", () => {
-  // arrange
-  const setShowForm = jest.fn();
-  render(<Header showForm={false} setShowForm={setShowForm} />);
+// Test case for clicking the "Share a fact" button
+test("toggles the state and changes button text when 'Share a fact' button is clicked", () => {
+  // Arrange
+  render(<HeaderWrapper />);
 
-  // act
+  // Act
   fireEvent.click(screen.getByText("Share a fact"));
 
-  //assert
-  expect(setShowForm).toHaveBeenCalledWith(expect.any(Function));
-  expect(setShowForm).toHaveBeenCalledTimes(1);
+  // Assert
+  // Verify the button text changes
+  expect(screen.getByText("Close")).toBeInTheDocument();
+});
 
-  // Retrieve the function passed to setShowForm
-  const toggleFunction = setShowForm.mock.calls[0][0];
+// Test case for clicking the "Close" button
+test("toggles the state and changes button text when 'Close' button is clicked", () => {
+  // Arrange
+  render(<HeaderWrapper />);
 
-  // Verify the behavior of the function
-  expect(toggleFunction(false)).toBe(true);
-  expect(toggleFunction(true)).toBe(false);
+  // Act
+  // First click to open the form
+  fireEvent.click(screen.getByText("Share a fact"));
+
+  // Second click to close the form
+  fireEvent.click(screen.getByText("Close"));
+
+  // Assert
+  // Verify the button text changes back
+  expect(screen.getByText("Share a fact")).toBeInTheDocument();
+});
+
+// Test case for logo attributes for fun
+test("renders logo with correct attributes", () => {
+  render(<HeaderWrapper />);
+  const logo = screen.getByAltText("Today I Learned Logo");
+  expect(logo).toBeInTheDocument();
+  expect(logo).toHaveAttribute("src", "logo.png");
+  expect(logo).toHaveAttribute("height", "68");
+  expect(logo).toHaveAttribute("width", "68");
 });
